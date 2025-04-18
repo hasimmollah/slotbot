@@ -1,7 +1,10 @@
-from backend.intents import parse_intent
-from backend.slotutils import generate_save_slots
+from backend.ai.intents import parse_intent
+from backend.slot.slotutils import generate_save_slots
 from django.http import JsonResponse
 import re
+import logging
+
+logger = logging.getLogger('slotbot')
 
 def extract_days(prompt: str) -> int:
     match = re.search(r"(\d+)\s+day[s]?", prompt)
@@ -32,20 +35,12 @@ def parse_slots_prompt(prompt: str):
     duration_minutes = int(duration_match.group(2)) if duration_match else 0  # Default to 0 minutes if not found
 
     duration_in_minutes = (duration_hours * 60) + duration_minutes
+    logger.info("Company :  %s , days : %s , duration hours : %d , duration minutes : %d ", company, days, duration_hours, duration_minutes)
 
     return company, days, duration_in_minutes
 
 
 def parse_intent_from_prompt(prompt):
-    # Replace with actual TinyLLaMA inference call
-    """
-    if "add" in prompt:
-        return "🗓️ Added event to calendar!"
-    elif "remove" in prompt:
-        return "🗑️ Removed event from calendar."
-    elif "show" in prompt or "display" in prompt:
-        return "📋 Showing upcoming events."
-    """
     if is_slot_add_request(prompt):
         company, days, duration_in_minutes = parse_slots_prompt(prompt)
         return generate_save_slots(company, days, duration_in_minutes)

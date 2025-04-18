@@ -1,6 +1,9 @@
 # Slotbot: Chatbot-Powered Calendar Scheduling App
 
-This project is built using **Django** for the backend, **React** for the frontend, and **Python** to handle business logic and data management. The main purpose of this project is to create a **chatbot** that allows users to query available **interview slots** for a company and display those slots both in the chat window and on an integrated calendar.
+This project is built using **Django** for the backend, **React** for the frontend, and **Python** to handle business logic and data management. 
+The main purpose of this project is to create a **chatbot** that allows users to query 
+available **interview slots** for a company and display those slots both in the chat window and on an integrated calendar.
+This application is useful for scheduling meetings when invitees' calendars are unavailable, and when multiple clients require several meeting time options.
 
 ## Project Overview
 
@@ -58,6 +61,9 @@ The application allows users to:
    python3 -m venv venv
    source venv/bin/activate   # On Windows use `venv\Scripts\activate`
 
+   - Install the required Python dependencies:
+   pip install -r requirements.txt
+   
 3. **DB Migration**:
    - Need to run below command to prepare tables
    ```bash

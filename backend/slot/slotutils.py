@@ -1,9 +1,12 @@
+import logging
 from datetime import datetime, timedelta, time
 
 from django.http import JsonResponse
 
 from backend.models import InterviewSlot
 from typing import List
+
+logger = logging.getLogger('slotbot')
 
 def format_slots(slots: List[InterviewSlot]) -> List[dict]:
     formatted_slots = [
@@ -20,6 +23,7 @@ def format_slots(slots: List[InterviewSlot]) -> List[dict]:
 
 def fetch_all_slots():
     slots = InterviewSlot.objects.all()
+    logger.info("Count of slots : %d ", slots.count())
     return format_slots(slots)
 
 
