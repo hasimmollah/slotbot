@@ -21,10 +21,3 @@ The application allows users to:
 2. **Calendar Integration**:
    - Available slots for each company are shown on an interactive calendar, making it easy for users to view the scheduled times.
    - The calendar shows the slots in **hourly** increments, ensuring the schedule is easy to manage and understand.
-
-3. **Slot Constraints**
-
-## DB Migration
-To create db tables 
-- python3 manage.py makemigrations
-- python3 manage.py migrate
