@@ -1,4 +1,4 @@
-# Slotbot: Chatbot and Calendar Application
+# Slotbot: Application to interact with chatbot for scheduling and display in calendar
 
 This project is built using **Django** for the backend, **React** for the frontend, and **Python** to handle business logic and data management. The main purpose of this project is to create a **chatbot** that allows users to query available **interview slots** for a company and display those slots both in the chat window and on an integrated calendar.
 
