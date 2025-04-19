@@ -1,6 +1,7 @@
 from backend.ai.intents import parse_intent
-from backend.slot.slotutils import generate_save_slots
+from backend.slot.slotutils import generate_save_slots, confirmed_slot
 from django.http import JsonResponse
+from datetime import datetime
 import re
 import logging
 
@@ -23,6 +24,10 @@ def is_slot_add_request(prompt: str) -> bool:
     keywords = ["available slots", "interview slots", "show slots", "meeting slots"]
     return any(kw in prompt.lower() for kw in keywords)
 
+def is_slot_confirmed_request(prompt: str) -> bool:
+    keywords = ["confirmed slot", "Confirmed slot", "Slot confirmed", "slot confirmed"]
+    return any(kw in prompt.lower() for kw in keywords)
+
 def parse_slots_prompt(prompt: str):
     # Extracting company, days, and duration
     company_match = re.search(r"for\s+([a-zA-Z0-9_]+)(?:\s+for\s+\d+\s+days)?", prompt)
@@ -39,10 +44,32 @@ def parse_slots_prompt(prompt: str):
 
     return company, days, duration_in_minutes
 
+def parse_confirmed_slot_prompt(prompt):
+    pattern = r"(?:[Cc]onfirmed\s*slot|[Ss]lot\s*confirmed) for (\w+) on (\d{2}-\d{2}-\d{4}) at (\d{2}:\d{2} (?:AM|PM)) - (\d{2}:\d{2} (?:AM|PM))"
+    match = re.search(pattern, prompt)
+    if match:
+        company_name = match.group(1)
+        date_str = match.group(2)
+        start_time_str = match.group(3)
+        end_time_str = match.group(4)
+
+        # Parse the date and time into Python objects
+        date_obj = datetime.strptime(date_str, "%d-%m-%Y").date()
+        start_time_obj = datetime.strptime(start_time_str, "%I:%M %p").time()
+        end_time_obj = datetime.strptime(end_time_str, "%I:%M %p").time()
+        return company_name, date_obj, start_time_obj, end_time_obj
+    else:
+        logger.info("No match found.")
+        return None, None, None, None
+
 
 def parse_intent_from_prompt(prompt):
     if is_slot_add_request(prompt):
         company, days, duration_in_minutes = parse_slots_prompt(prompt)
         return generate_save_slots(company, days, duration_in_minutes)
+    elif is_slot_confirmed_request(prompt):
+        company_name, date_obj, start_time_obj, end_time_obj = parse_confirmed_slot_prompt(prompt)
+        return confirmed_slot(company_name, date_obj, start_time_obj, end_time_obj)
+
     else:
         return JsonResponse({"response": parse_intent(prompt)})

@@ -8,7 +8,7 @@ const ChatBox = () => {
     const handleSend = async () => {
         if (!input.trim()) return;
         setChat(prev => [...prev, `🧑: ${input}`]);
-        const res = await fetch("http://localhost:8000/api/chat/", {
+        const res = await fetch("/api/chat/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ prompt: input }),
@@ -24,6 +24,10 @@ const ChatBox = () => {
                       .map((slot) => `🏢 ${slot.company}  📅 ${slot.date} 🕒 ${slot.start} - ${slot.end}`)
                       .join('\n')
           ]);
+          setInput("");
+        } else if (data.response_type === "slot_confirmed") {
+          setSlots(data.slots);  // 👈 This updates global context
+          setChat(prev => [...prev, `🤖: ${data.response}`]);
           setInput("");
         } else {
           setChat(prev => [...prev, `🤖: ${data.response}`]);

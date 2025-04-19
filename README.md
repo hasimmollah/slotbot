@@ -20,6 +20,8 @@ The application allows users to:
 1. **Chatbot Integration**:
    - Users can type specific prompts like **"Show slots for ABC Company"**, and the chatbot will fetch available slots and display them.
    - Users can specify additional parameters like **duration** and **number of days** when querying the available slots.
+   - User can confirm a scheduled slot for a given company like "Confirmed slot for ABC Company on 21-04-2025 at 09:00 AM - 10:00 AM"
+     and chatbot will confirm the slot and delete all other slot for this company which is not booked but was provisioned to confirm.
 
 2. **Calendar Integration**:
    - Available slots for each company are shown on an interactive calendar, making it easy for users to view the scheduled times.
@@ -31,7 +33,7 @@ The application allows users to:
    - Allowed hours: Slots can only be scheduled between 8 AM - 5 PM on weekdays. The 12 PM - 1 PM time block is unavailable due to the lunch break.
 4. **Flexible Slot Scheduling**:
    - The system allows users to specify custom slot durations and can schedule them consecutively if possible. If no slots are available at the requested time, the system will try to fit the requested duration in the next available time slot.
-
+ 
 ## Technologies Used
 - **Backend**:
   - **Django**: A high-level Python web framework to handle the backend API and data storage (PostgreSQL or SQLite as the database).
@@ -111,4 +113,4 @@ The application allows users to:
 - Admin Panel: Create an admin interface to manage slots for different companies.
 - Mobile Support: Improve the responsiveness of the frontend to support mobile devices.
 - Slot Conflict Resolution: Enhance the slot conflict resolution logic with more granular control over scheduling.
-- Deleting slot from calendar
+

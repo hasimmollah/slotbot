@@ -1,6 +1,9 @@
 import logging
 from datetime import datetime, timedelta, time
 
+from rest_framework import status
+from rest_framework.response import Response
+
 from django.http import JsonResponse
 
 from backend.models import InterviewSlot
@@ -11,6 +14,7 @@ logger = logging.getLogger('slotbot')
 def format_slots(slots: List[InterviewSlot]) -> List[dict]:
     formatted_slots = [
         {
+            'id' : slot.id,
             'company': slot.company,
             'date': slot.date.strftime("%Y-%m-%d"),  # Ensure date is a string
             'start': slot.start_time.strftime('%H:%M'),  # Format time
@@ -18,22 +22,43 @@ def format_slots(slots: List[InterviewSlot]) -> List[dict]:
         }
         for slot in slots
     ]
+    logger.info(formatted_slots)
     # Return the formatted data in the JSON response
-    return JsonResponse({"response_type": "slots", "slots": formatted_slots})
+    return formatted_slots
 
 def fetch_all_slots():
     slots = InterviewSlot.objects.all()
     logger.info("Count of slots : %d ", slots.count())
-    return format_slots(slots)
+    return Response({"response_type": "slots", "slots": format_slots(slots)}, status=status.HTTP_200_OK)
 
+
+def delete_slot(slot_id: int):
+    logger.info("Deleting slot with id : %d ", slot_id)
+    slot = InterviewSlot.objects.get(id=slot_id)
+    slot.delete()
+    return Response( status=status.HTTP_204_NO_CONTENT)
 
 def generate_save_slots(company_name: str = "", days: int = 7, duration_in_minutes: int = 60):
     slots = generate_slots(company_name, days, duration_in_minutes)
-    save_slots(slots)
-    return format_slots(slots)
+    created_slots = save_slots(slots)
+    return Response({"response_type": "slots", "slots": format_slots(created_slots)}, status=status.HTTP_200_OK)
+
 
 def save_slots(slots):
-    InterviewSlot.objects.bulk_create(slots)
+    return InterviewSlot.objects.bulk_create(slots)
+
+def confirmed_slot(company_name, date_obj, start_time_obj, end_time_obj):
+    InterviewSlot.objects.filter(
+        company=company_name,
+        date=date_obj,
+        start_time=start_time_obj,
+        end_time=end_time_obj
+    ).update(is_booked=True)
+    InterviewSlot.objects.filter(
+        company=company_name,
+        is_booked=False
+    ).delete()
+    return Response({"response_type": "slot_confirmed", "slots": format_slots(InterviewSlot.objects.all()) , "response": "slot confirmed successfully"}, status=status.HTTP_200_OK)
 
 def generate_slots(company_name: str = "", days: int = 7, duration_in_minutes: int = 60, daily_limit: int = 3, start_date: str = None):
     slots = []

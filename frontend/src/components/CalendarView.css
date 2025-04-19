@@ -1,0 +1,21 @@
+.rbc-event:hover .delete-icon {
+  visibility: visible; /* Make delete icon visible on hover */
+}
+
+.custom-event {
+  position: relative;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #ccc;
+}
+
+.delete-icon {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  visibility: hidden;
+  transition: visibility 0.2s ease;
+  color: #000000;
+}
